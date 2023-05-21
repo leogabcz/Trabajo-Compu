@@ -1,13 +1,6 @@
 import numpy as np
 
 class fdtd2D:
-    Lx = 201 #numero de celdas horizontales
-    Ly = 201 #numero de celdas verticales
-    ex = np.zeros((Lx-1, Ly))
-    ey = np.zeros((Lx, Ly-1))   #Se declaran todos del mismo tamaño
-    hz = np.zeros((Lx-1, Ly-1))   #luego simplemente se omitiran los ultimos
-    bcl = ''    
-    CFL = 0.9
 
     def __init__(self, Lx, Ly, CFL, bcl = ['mur', 'pbc', 'pec']) -> None:
         
@@ -21,6 +14,9 @@ class fdtd2D:
         self.dy = self.y[1] - self.y[0]
         self.xDual = (self.x[1:] + self.x[:-1])/2
         self.yDual = (self.y[1:] + self.y[:-1])/2
+        self.ex = np.zeros((Lx-1,Ly))
+        self.ey = np.zeros((Lx,Ly-1))
+        self.hz = np.zeros((Lx-1,Ly-1))
         self.initGauss(Lx/20, Lx/20, Lx/2, Ly/2)
         self.dt = CFL*np.sqrt(self.dx**2 + self.dy**2)
         self.mu = 1
@@ -84,5 +80,5 @@ class fdtd2D:
             #El campo magnetico en z adelantado diagonalmente
             for i in range( lx-1 ):
                 self.hz[i,j] = np.exp( -1/2*self.dx*( i + 1/2 - i0 )**2/sx**2  + -1/2*self.dy*( j + 1/2 - j0 )**2/sy**2 )
-        
+  
         
