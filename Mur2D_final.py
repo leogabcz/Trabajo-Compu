@@ -15,7 +15,7 @@ ndiv = 5
 filtro = np.zeros((len(glocx),len(glocy)), dtype=bool) #Filtro se encarga de quitar las felchas del plot para que no esté
 for i in range(len(filtro)):                           #sobrecargado. Es una matriz de verdadero o falso.
         for j in range(len(filtro)):
-            if (i+j) % ndiv == 0:
+            if (i % ndiv == 0 and j % ndiv == 0):
                 filtro[i,j] = True
 
             else:
@@ -29,6 +29,7 @@ vz = np.zeros((len(glocx),len(glocy)))     #sólo X e Y y el otro Z, por lo que 
 vx[:,:] = 1/2*( sm.ex[:,1:] + sm.ex[:,:-1] )
 vy[:,:] = 1/2*( sm.ey[1:,:] + sm.ey[:-1,:] )
 vz[:,:] = sm.hz[:,:]
+
 #vz = np.zeros((len(glocx),len(glocy)))
 #dirv = np.zeros((len(glocx),len(glocy)))
 
@@ -44,7 +45,7 @@ figure.tight_layout()                #Esto deja todo compactado (evita que se pi
 
 ax1 = plt.subplot(1,3,1)
 ax2 = plt.subplot(1,3,2)             #Esto declara los plot que se pintarán por serparado, así se pueden quitar o añadir 
-ax3 = plt.subplot(1,3,3)             #fácilmente
+#ax3 = plt.subplot(1,3,3)             #fácilmente
         
 tRange = np.linspace(0, 10, 401)
 for t in tRange:
@@ -53,24 +54,26 @@ for t in tRange:
     vx[:,:] = 1/2*( sm.ex[:,1:] + sm.ex[:,:-1] )
     vy[:,:] = 1/2*( sm.ey[1:,:] + sm.ey[:-1,:] )
     vz[:,:] = sm.hz[:,:]
+    minim = np.nanmin(vz)
+    maxim = np.nanmax(vz)*1.2
     #Esto es el cálculo de componentes, no forma 
     #No forma parte de la representación en sí
     
     #ax1 es el plot vectorial con el color de fondo, ax2 sólo son las flechas y ax3 los colores con líneal de nivel
     
     
-    ax1.quiver(posx[filtro],posy[filtro],vx[filtro],vy[filtro],scale=40.0)
-    im=ax1.imshow(vz,vmax=2,vmin=-2,extent=(0.0,1.0,0.0,1.0),cmap='turbo',origin='lower') 
-    #cb1 = plt.colorbar(im, ax=ax1)
+    ax1.quiver(posx[filtro],posy[filtro],vx[filtro],vy[filtro],scale=20)
+    im=ax1.imshow(vz,extent=(0.0,1.0,0.0,1.0),cmap='turbo',origin='lower',vmax=maxim) 
+#    cb1 = plt.colorbar(im, ax=ax1)
     ax1.grid()
     
-    ax2.quiver(posx[filtro],posy[filtro],vx[filtro],vy[filtro],scale=40.0)
+    ax2.quiver(posx[filtro],posy[filtro],vx[filtro],vy[filtro],scale=15)
     ax2.grid()
     
-    im=ax3.imshow(vz,vmax=2,vmin=-2,extent=(0.0,1.0,0.0,1.0),cmap='turbo',origin='lower')
-    ax3.contour(posx,posy,vz,5,colors='white',alpha=0.5)
-    #cb3 = plt.colorbar(im, ax=ax3)
-    ax3.grid()
+#    im=ax3.imshow(vz,vmax=2,vmin=-2,extent=(0.0,1.0,0.0,1.0),cmap='turbo',origin='lower')
+#    ax3.contour(posx,posy,vz,5,colors='white',alpha=0.5)
+#    cb3 = plt.colorbar(im, ax=ax3)
+#    ax3.grid()
     
 #    plt.grid()
 #    plt.ylim(-0.1, 1.1)
@@ -78,7 +81,7 @@ for t in tRange:
     plt.pause(0.001) # pausa 0.1s
     ax1.cla() # cierra los plots anteriores
     ax2.cla()
-    ax3.cla()
-    #cb1.remove()
-    #cb3.remove()
+#    ax3.cla()
+#    cb1.remove()
+#    cb3.remove()
 print("END")
