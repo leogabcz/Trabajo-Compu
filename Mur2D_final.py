@@ -26,8 +26,8 @@ vx = np.zeros((len(glocx),len(glocy)))
 vy = np.zeros((len(glocx),len(glocy)))     #Son las componentes X, Y, Z de los vectores, en nuestro caso un vector tendrá 
 vz = np.zeros((len(glocx),len(glocy)))     #sólo X e Y y el otro Z, por lo que no hace falta crear más.
 
-vx[:,:] = 1/2*( sm.ex[:,1:] + sm.ex[:,:-1] )
-vy[:,:] = 1/2*( sm.ey[1:,:] + sm.ey[:-1,:] )
+vx[:,:] = 1./2*( sm.ex[:,1:] + sm.ex[:,:-1] )
+vy[:,:] = 1./2*( sm.ey[1:,:] + sm.ey[:-1,:] )
 vz[:,:] = sm.hz[:,:]
 
 #vz = np.zeros((len(glocx),len(glocy)))
@@ -40,12 +40,12 @@ for j in range(len(glocy)):     #Asigno valores de las posiciones en Y
     posy[:,j] = glocy[j]
 
             
-figure = plt.figure(figsize=(18,6))  #Aquí genero la figura
+figure = plt.figure(figsize=(12,7))  #Aquí genero la figura
 figure.tight_layout()                #Esto deja todo compactado (evita que se pisen mutuamente las gráficas)
 
-ax1 = plt.subplot(1,3,1)
-ax2 = plt.subplot(1,3,2)             #Esto declara los plot que se pintarán por serparado, así se pueden quitar o añadir 
-#ax3 = plt.subplot(1,3,3)             #fácilmente
+ax1 = plt.subplot(1,2,1)
+ax2 = plt.subplot(1,2,2)             #Esto declara los plot que se pintarán por serparado, así se pueden quitar o añadir 
+                                     #fácilmente
         
 tRange = np.linspace(0, 10, 401)
 for t in tRange:
@@ -61,20 +61,16 @@ for t in tRange:
     
     #ax1 es el plot vectorial con el color de fondo, ax2 sólo son las flechas y ax3 los colores con líneal de nivel
     
+    e_mod = np.sqrt(vx**2 + vy**2)
+    ax1.quiver(posx[filtro],posy[filtro],vx[filtro],vy[filtro],scale=18,angles='xy')
+    im=ax1.imshow(e_mod.T,extent=(0.0,1.0,0.0,1.0),origin='lower',cmap='viridis',vmax=maxim,vmin=-0.3) 
+#    cb1 = plt.colorbar(im, ax=ax1,label=r'|$\vec{E}$|')
+#    ax1.grid()
     
-    ax1.quiver(posx[filtro],posy[filtro],vx[filtro],vy[filtro],scale=20)
-    im=ax1.imshow(vz,extent=(0.0,1.0,0.0,1.0),cmap='turbo',origin='lower',vmax=maxim) 
-#    cb1 = plt.colorbar(im, ax=ax1)
-    ax1.grid()
-    
-    ax2.quiver(posx[filtro],posy[filtro],vx[filtro],vy[filtro],scale=15)
-    ax2.grid()
-    
-#    im=ax3.imshow(vz,vmax=2,vmin=-2,extent=(0.0,1.0,0.0,1.0),cmap='turbo',origin='lower')
-#    ax3.contour(posx,posy,vz,5,colors='white',alpha=0.5)
-#    cb3 = plt.colorbar(im, ax=ax3)
-#    ax3.grid()
-    
+    im=ax2.imshow(vz.T,extent=(0.0,1.0,0.0,1.0),cmap='turbo',origin='lower')
+    ax2.contour(posx,posy,vz,4,colors='white',alpha=0.7)
+#    cb2 = plt.colorbar(im, ax=ax2,label=r'H$_z$')
+#    ax2.grid()
 #    plt.grid()
 #    plt.ylim(-0.1, 1.1)
 #    plt.xlim(glocx[0], glocx[-1])
@@ -83,5 +79,5 @@ for t in tRange:
     ax2.cla()
 #    ax3.cla()
 #    cb1.remove()
-#    cb3.remove()
+#    cb2.remove()
 print("END")
