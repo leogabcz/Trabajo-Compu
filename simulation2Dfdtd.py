@@ -21,9 +21,30 @@ class fdtd2D:
             #El campo magnetico en z adelantado diagonalmente
             for i in range( lx-1 ):
                 self.hz[i,j] = 2.5*np.exp( -1/2*self.dx*( i + 1/2 - i0 )**2/sx**2  + -1/2*self.dy*( j + 1/2 - j0 )**2/sy**2 )
+
+
+    def initGaussRadial(self, sx, sy, x0, y0):
+        
+        lx = self.Lx
+        ly = self.Ly
+        i0 = x0/self.dx
+        j0 = y0/self.dy
+        #Modo tangente eléctrico
+        for j in range( ly ):
+            #El campo x adelantado 1/2 en x (1 posicion en x menos)
+            for i in range( lx-1 ):
+                self.ex[i,j] = 2*np.exp( -1/2*self.dx*( i + 1/2 - i0 )**2/sx**2  + -1/2*self.dy*( j - j0 )**2/sy**2 )
+        for j in range( ly-1 ):
+            #El campo y adelantado 1/2 en y (1 posicion menos en y)
+            for i in range( lx ):
+                self.ey[i,j] = 2*np.exp( -1/2*self.dx*( i - i0 )**2/sx**2  + -1/2*self.dy*( j  + 1/2 - j0 )**2/sy**2 )
+        for j in range( ly-1 ):
+            #El campo magnetico en z adelantado diagonalmente
+            for i in range( lx-1 ):
+                self.hz[i,j] = 2.5*np.exp( -1/2*self.dx*( i + 1/2 - i0 )**2/sx**2  + -1/2*self.dy*( j + 1/2 - j0 )**2/sy**2 )
         
         
-    def __init__(self, Lx, Ly, CFL, bcl = ['mur', 'pbc', 'pec']):
+    def __init__(self, Lx, Ly, CFL, bcl = ['mur', 'pbc', 'pec'], condini = ['gausstang', 'gaussrad']):
         
         self.Lx = Lx
         self.Ly = Ly
@@ -33,7 +54,8 @@ class fdtd2D:
         self.sigma = 0
         self.c = 1/np.sqrt(self.eps*self.mu)
         self.bcl = 'mur'
-
+        self.condini = condini 
+        
         self.x = np.linspace(0, 1, Lx)
         self.y = np.linspace(0, 1, Ly)
         self.dx = self.x[1] - self.x[0]
@@ -42,7 +64,11 @@ class fdtd2D:
         self.ex = np.zeros((Lx-1,Ly))
         self.ey = np.zeros((Lx,Ly-1))
         self.hz = np.zeros((Lx-1,Ly-1))
-        self.initGauss(0.4, 0.4, 0.5, 0.5)
+        
+        if self.condini == 'gausstang':
+            self.initGauss(0.4, 0.4, 0.5, 0.5)
+        elif self.condini == 'gaussrad':
+            self.initGaussRadial(0.4, 0.4, 0.5, 0.5)
         
     def sim(self, T):
         

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from simulation2Dfdtd import fdtd2D
 
 
-sm = fdtd2D(201, 201, 0.95, 'mur')
+sm = fdtd2D(201, 201, 0.95, 'mur', 'gaussrad')
 
 glocx = np.linspace(0, sm.Lx*sm.dx, sm.Lx-1)    #Genero la dimensión X del espacio de nuestro sistema
 glocy = np.linspace(0, sm.Ly*sm.dy, sm.Ly-1)    #Genero la dimensión Y del espacio de nuestro sistema
