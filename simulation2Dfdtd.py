@@ -146,5 +146,5 @@ class fdtd2D:
         e2y = self.ey*self.ey
         h2z = self.hz*self.hz
 
-        self.energy = 1/2 * eps *(np.sum(e2x)) + 1/2 * eps *(np.sum(e2y)) + (1 /2 /nu) * (np.sum(h2z))
+        self.energy = 1/2 * eps *(np.sum(e2x[frxmin:frxmax])) + 1/2 * eps *(np.sum(e2y[frxmin:frxmax])) + (1 /2 /nu) * (np.sum(h2z))
                             
