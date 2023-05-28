@@ -124,9 +124,10 @@ class fdtd2D:
                 self.ex[:,frymin] = aux3x[:] + (c * dt - dy )/(c * dt + dy)*(self.ex[:,frymin+1] - aux1x[:])
                 self.ex[:,frymax] = aux4x[:] + (c * dt - dy )/(c * dt + dy)*(self.ex[:,frymax-1] - aux2x[:])
                 self.ey[frxmin,:] = aux3y[:] + (c * dt - dx )/(c * dt + dx)*(self.ey[frxmin+1,:] - aux1y[:])
+        
+        self.energy = self.energia(frxmin, frxmax, frymin, frymax)
     
-    
-    def energia(self):
+    def energia(self, frxmin, frxmax, frymin, frymax):
         
         eps = self.eps
         mu = self.mu
@@ -135,5 +136,5 @@ class fdtd2D:
         e2y = self.ey*self.ey
         h2z = self.hz*self.hz
 
-        self.energy = 1/2 * eps *(np.sum(e2x[frxmin:frxmax])) + 1/2 * eps *(np.sum(e2y[frxmin:frxmax])) + (1 /2 /nu) * (np.sum(h2z[frxmin:frxmax]))
-                            
+        energy = 1/2 * eps *(np.sum(e2x[frxmin:frxmax])) + 1/2 * eps *(np.sum(e2y[frymin:frymax])) + (1 /2 /mu) * (np.sum(h2z[frxmin:frxmax]))
+        return energy                 

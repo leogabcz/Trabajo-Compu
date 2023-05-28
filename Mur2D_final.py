@@ -48,9 +48,13 @@ ax2 = plt.subplot(1,2,2)             #Esto declara los plot que se pintarán por
                                      #fácilmente
         
 tRange = np.linspace(0, 10, 401)
+energy_list = []
 for t in tRange:
     
     sm.sim(1)
+
+    energy_list.append(sm.energy)
+
     vx[:,:] = 1/2*( sm.ex[:,1:] + sm.ex[:,:-1] )
     vy[:,:] = 1/2*( sm.ey[1:,:] + sm.ey[:-1,:] )
     vz[:,:] = sm.hz[:,:]
@@ -80,4 +84,10 @@ for t in tRange:
 #    ax3.cla()
 #    cb1.remove()
 #    cb2.remove()
+
+
+fig = plt.figure(figsize=(8,8))
+plt.plot(tRange, energy_list)
+plt.show()
+
 print("END")
