@@ -47,10 +47,10 @@ ax1 = plt.subplot(1,2,1)
 ax2 = plt.subplot(1,2,2)             #Esto declara los plot que se pintarán por serparado, así se pueden quitar o añadir 
                                      #fácilmente
         
-tRange = np.linspace(0, 10, 201)
+niter = np.arange(0,600,1)
 energy_list = []
 
-for t in tRange:
+for t in niter:
     
     sm.sim(1)
     energy_list.append(sm.energy)
@@ -65,6 +65,9 @@ for t in tRange:
     #No forma parte de la representación en sí
     
     #ax1 es el plot vectorial con el color de fondo, ax2 sólo son las flechas y ax3 los colores con líneal de nivel
+    
+    ax1.set_title(r"Campo $\vec{H}\,=\,\vec{H}_x + \vec{H}_y$")
+    ax2.set_title(r"Campo $\vec{E}_z$")
     
     e_mod = np.sqrt(vx**2 + vy**2)
     ax1.quiver(posx[filtro],posy[filtro],vx[filtro],vy[filtro],scale=18,angles='xy')
@@ -87,7 +90,11 @@ for t in tRange:
 #    cb2.remove()
 
 fig = plt.figure(figsize=(8,8))
-plt.plot(tRange, energy_list)
+plt.title("Evolución temporal de la energía del campo electromagnético")
+plt.grid()
+plt.xlabel("Tiempo")
+plt.ylabel("Energía")
+plt.plot(niter*sm.dt, energy_list)
 plt.show()
 
 
