@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from simulacion2Dez import fdtd2Dez
 
 
-sm = fdtd2Dez(201, 201, 0.95, 'mur2d', 'gausstang')
+sm = fdtd2Dez(201, 201, 0.95, 'mur', 'gausstang')
 
 glocx = np.linspace(0, sm.Lx*sm.dx, sm.Lx-1)    #Genero la dimensión X del espacio de nuestro sistema
 glocy = np.linspace(0, sm.Ly*sm.dy, sm.Ly-1)    #Genero la dimensión Y del espacio de nuestro sistema
@@ -26,9 +26,9 @@ vx = np.zeros((len(glocx),len(glocy)))
 vy = np.zeros((len(glocx),len(glocy)))     #Son las componentes X, Y, Z de los vectores, en nuestro caso un vector tendrá 
 vz = np.zeros((len(glocx),len(glocy)))     #sólo X e Y y el otro Z, por lo que no hace falta crear más.
 
-vx[:,:] = 1./2*( sm.hx[:,1:] + sm.hx[:,:-1] )
-vy[:,:] = 1./2*( sm.hy[1:,:] + sm.hy[:-1,:] )
-vz[:,:] = sm.ez[:,:]
+vx[:,:] = 1./2*( sm.hx[1:,:] + sm.hx[:-1,:] )
+vy[:,:] = 1./2*( sm.hy[:,1:] + sm.hy[:,:-1] )
+vz[:,:] = 1./2*(sm.ez[1:,1:] - sm.ez[:-1,:-1])
 
 #vz = np.zeros((len(glocx),len(glocy)))
 #dirv = np.zeros((len(glocx),len(glocy)))
@@ -56,9 +56,9 @@ for t in niter:
     energy_list.append(sm.energy)
     
 
-    vx[:,:] = 1/2*( sm.hx[:,1:] + sm.hx[:,:-1] )
-    vy[:,:] = 1/2*( sm.hy[1:,:] + sm.hy[:-1,:] )
-    vz[:,:] = sm.ez[:,:]
+    vx[:,:] = 1/2*( sm.hx[1:,:] + sm.hx[:-1,:] )
+    vy[:,:] = 1/2*( sm.hy[:,1:] + sm.hy[:,:-1] )
+    vz[:,:] = 1/2*(sm.ez[1:,1:] - sm.ez[:-1,:-1])
     minim = np.nanmin(vz)
     maxim = np.nanmax(vz)*1.2
     #Esto es el cálculo de componentes, no forma 

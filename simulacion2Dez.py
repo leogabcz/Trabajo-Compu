@@ -9,39 +9,21 @@ class fdtd2Dez:
         i0 = x0/self.dx
         j0 = y0/self.dy
         #Modo tangente eléctrico
-        for j in range( ly -1):
-            #El campo x adelantado 1/2 en x (1 posicion en x menos)
-            for i in range( lx -1):
-                self.ez[i,j] = 2*np.exp( -1/2*self.dx*( i - i0 )**2/sx**2  + -1/2*self.dy*( j - j0 )**2/sy**2 )
         for j in range( ly ):
-            #El campo magnetico en z adelantado diagonalmente
-            for i in range( lx-1 ):
-                self.hx[i,j] = 0
-        for j in range( ly-1 ):
+            #El campo x adelantado 1/2 en x (1 posicion en x menos)
+            for i in range( lx ):
+                self.ez[i,j] = 2*np.exp( -1/2*self.dx*( i -i0 )**2/sx**2  + -1/2*self.dy*( j - j0 )**2/sy**2 )
+        for j in range( ly -1):
             #El campo magnetico en z adelantado diagonalmente
             for i in range( lx ):
+                self.hx[i,j] = 0
+        for j in range( ly ):
+            #El campo magnetico en z adelantado diagonalmente
+            for i in range( lx -1 ):
                 self.hy[i,j] = 0
 
 
-    def initGaussRadial(self, sx, sy, x0, y0):
-        
-        lx = self.Lx
-        ly = self.Ly
-        i0 = x0/self.dx
-        j0 = y0/self.dy
-        #Modo tangente eléctrico
-        for j in range( ly ):
-            #El campo x adelantado 1/2 en x (1 posicion en x menos)
-            for i in range( lx-1 ):
-                self.ex[i,j] = 2*np.exp( -1/2*self.dx*( i + 1/2 - i0 )**2/sx**2  + -1/2*self.dy*( j - j0 )**2/sy**2 )
-        for j in range( ly-1 ):
-            #El campo y adelantado 1/2 en y (1 posicion menos en y)
-            for i in range( lx ):
-                self.ey[i,j] = 2*np.exp( -1/2*self.dx*( i - i0 )**2/sx**2  + -1/2*self.dy*( j  + 1/2 - j0 )**2/sy**2 )
-        for j in range( ly-1 ):
-            #El campo magnetico en z adelantado diagonalmente
-            for i in range( lx-1 ):
-                self.hz[i,j] = 2.5*np.exp( -1/2*self.dx*( i + 1/2 - i0 )**2/sx**2  + -1/2*self.dy*( j + 1/2 - j0 )**2/sy**2 )
+
         
         
     def __init__(self, Lx, Ly, CFL, bcl = ['mur', 'pbc', 'pec', 'mur2'], condini = ['gausstang', 'gaussrad']):
@@ -61,9 +43,9 @@ class fdtd2Dez:
         self.dx = self.x[1] - self.x[0]
         self.dy = self.y[1] - self.y[0]
         self.dt = CFL/np.sqrt(1/self.dx**2 + 1/self.dy**2)/self.c
-        self.hx = np.zeros((Lx-1,Ly))
-        self.hy = np.zeros((Lx,Ly-1))
-        self.ez = np.zeros((Lx-1,Ly-1))
+        self.hx = np.zeros((Lx,Ly-1))
+        self.hy = np.zeros((Lx-1,Ly))
+        self.ez = np.zeros((Lx,Ly))
         
         if self.condini == 'gausstang':
             self.initGauss(0.4, 0.4, 0.5, 0.5)
@@ -88,19 +70,19 @@ class fdtd2Dez:
         beta = 1 + 1/2*sigma*dt/eps
         #Metemos las fronteras
         frxmin = int(self.Lx/1000)
-        frxmax = self.Lx - 2
-        frymin = int(self.Ly/1000)
-        frymax = self.Ly - 2
+        frxmax = self.Lx - 1
+        frymin = int(self.Ly/1000) 
+        frymax = self.Ly - 1
         assert(frxmin >= 0)
         assert(frxmax < self.Lx and frxmax > frxmin)
         assert(frymin >= 0)
         assert(frymax < self.Ly and frymax > frymin)
 
         if self.bcl == 'pec':
-            self.ez[:,0]= np.zeros(self.Ly - 1)
-            self.ez[-1,:]= np.zeros(self.Lx - 1)
-            self.ez[:,-1]= np.zeros(self.Ly - 1)
-            self.ez[0,:]= np.zeros(self.Lx - 1)
+            self.ez[:,0]= np.zeros(self.Ly )
+            self.ez[-1,:]= np.zeros(self.Lx )
+            self.ez[:,-1]= np.zeros(self.Ly )
+            self.ez[0,:]= np.zeros(self.Lx )
         for t in range(T):
             if self.bcl == 'mur' or self.bcl == 'mur2':
                 aux1 = self.ez[:,frymin] #Frontera OY inferior
@@ -112,15 +94,15 @@ class fdtd2Dez:
                 aux7 = self.ez[frxmin + 1,:] #Antes de frontera OX izda 
                 aux8 = self.ez[frxmax - 1,:] #Antes de frontera OX dcha
             elif self.bcl == 'pec':
-                 self.ez[:,0]= np.zeros(self.Lx - 1)
-                 self.ez[-1,:]= np.zeros(self.Ly - 1)
-                 self.ez[:,-1]= np.zeros(self.Lx - 1)
-                 self.ez[0,:]= np.zeros(self.Ly - 1)
+                 self.ez[:,0]= np.zeros(self.Lx)
+                 self.ez[-1,:]= np.zeros(self.Ly)
+                 self.ez[:,-1]= np.zeros(self.Lx)
+                 self.ez[0,:]= np.zeros(self.Ly)
             
             #Hay un rotacional, las Ex y dy van alternadas
-            self.hx[:,1:-1] =  self.hx[:,1:-1] - dt/mu/dx*( self.ez[:,1:] - self.ez[:,:-1]) 
-            self.hy[1:-1,:] =  self.hy[1:-1,:] + dt/mu/dx*( self.ez[1:,:] - self.ez[:-1,:]) 
-            self.ez[:,:] = alpha/beta*self.ez[:,:] + dt/beta/eps/dy*(self.hy[1:,:] - self.hy[:-1,:]) - dt/beta/eps/dy*(self.hx[:,1:] - self.hx[:,:-1])
+            self.hx[:,:] =  self.hx[:,:] - dt/mu/dx*( self.ez[:,1:] - self.ez[:,:-1]) 
+            self.hy[:,:] =  self.hy[:,:] + dt/mu/dx*( self.ez[1:,:] - self.ez[:-1,:]) 
+            self.ez[1:-1,1:-1] = alpha/beta*self.ez[1:-1,1:-1] + dt/beta/eps/dy*(self.hy[1:,1:-1] - self.hy[:-1,1:-1]) - dt/beta/eps/dy*(self.hx[1:-1,1:] - self.hx[1:-1,:-1])
             
             
             if self.bcl == 'mur':
@@ -147,8 +129,8 @@ class fdtd2Dez:
         h2x = self.hx*self.hx
         h2y = self.hy*self.hy
         e2z = self.ez*self.ez
-
-        energy = 1 * eps *(np.sum(e2z[frxmin:frxmax]))
+        energy = 1/2 * eps *(np.sum(e2z[frxmin:frxmax,frymin:frymax])) + (1/ 2 / mu) *(np.sum(h2y)) + (1 /2 /mu) * (np.sum(h2x))
+       
         return energy               
         
         
