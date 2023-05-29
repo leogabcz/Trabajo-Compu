@@ -112,10 +112,10 @@ class fdtd2Dez:
                 self.ez[frxmax,:] = aux8[:] + (c * dt - dy )/(c * dt + dy)*(self.ez[frxmax,:] - aux6[:])
 
             if self.bcl == 'mur2':
-                self.ez[:,frymin] = aux3[:] + (c * dt - dy )/(c * dt + dy)*(self.ez[:,frymin+1] - aux1[:]) + mu*c/ 2*(dy + c*dt) * (self.hy[1:,frymin] - self.hy[:-1,frymin] + self.hy[1:,frymin+1] - self.hy[:-1,frymin+1])
-                self.ez[:,frymax] = aux4[:] + (c * dt - dy )/(c * dt + dy)*(self.ez[:,frymax-1] - aux2[:]) + mu*c/ 2*(dy + c*dt) * (self.hy[1:,frymax] - self.hy[:-1,frymax] + self.hy[1:,frymax-1] - self.hy[:-1,frymax-1])
-                self.ez[frxmin,:] = aux7[:] + (c * dt - dy )/(c * dt + dy)*(self.ez[frxmin,:] - aux5[:]) - mu*c/ 2*(dy + c*dt) * (self.hx[frxmin,1:] - self.hx[frxmin,:-1] + self.hx[frxmin+1,1:] - self.hx[frxmin+1,:-1])
-                self.ez[frxmax,:] = aux8[:] + (c * dt - dy )/(c * dt + dy)*(self.ez[frxmax,:] - aux6[:]) - mu*c/ 2*(dy + c*dt) * (self.hx[frxmax,1:] - self.hx[frxmax,:-1] + self.hx[frxmax-1,1:] - self.hx[frxmax-1,:-1])
+                self.ez[1:-1,frymin] = aux3[1:-1] + (c * dt - dy )/(c * dt + dy)*(self.ez[1:-1,frymin+1] - aux1[1:-1]) + mu*c/ 2*(dy + c*dt) * (self.hy[1:,frymin] - self.hy[:-1,frymin] + self.hy[1:,frymin+1] - self.hy[:-1,frymin+1])
+                self.ez[1:-1,frymax] = aux4[1:-1] + (c * dt - dy )/(c * dt + dy)*(self.ez[1:-1,frymax-1] - aux2[1:-1]) + mu*c/ 2*(dy + c*dt) * (self.hy[1:,frymax] - self.hy[:-1,frymax] + self.hy[1:,frymax-1] - self.hy[:-1,frymax-1])
+                self.ez[frxmin,1:-1] = aux7[1:-1] + (c * dt - dy )/(c * dt + dy)*(self.ez[frxmin,1:-1] - aux5[1:-1]) - mu*c/ 2*(dy + c*dt) * (self.hx[frxmin,1:] - self.hx[frxmin,:-1] + self.hx[frxmin+1,1:] - self.hx[frxmin+1,:-1])
+                self.ez[frxmax,1:-1] = aux8[1:-1] + (c * dt - dy )/(c * dt + dy)*(self.ez[frxmax,1:-1] - aux6[1:-1]) - mu*c/ 2*(dy + c*dt) * (self.hx[frxmax,1:] - self.hx[frxmax,:-1] + self.hx[frxmax-1,1:] - self.hx[frxmax-1,:-1])
 
      
         self.energy = self.energia(frxmin, frxmax, frymin, frymax)        

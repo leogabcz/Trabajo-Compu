@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from simulacion2Dez import fdtd2Dez
 
 
-sm = fdtd2Dez(201, 201, 0.95, 'mur', 'gausstang')
+sm = fdtd2Dez(201, 201, 0.95, 'mur2', 'gausstang')
 
 glocx = np.linspace(0, sm.Lx*sm.dx, sm.Lx-1)    #Genero la dimensión X del espacio de nuestro sistema
 glocy = np.linspace(0, sm.Ly*sm.dy, sm.Ly-1)    #Genero la dimensión Y del espacio de nuestro sistema
