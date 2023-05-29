@@ -28,7 +28,7 @@ vz = np.zeros((len(glocx),len(glocy)))     #sólo X e Y y el otro Z, por lo que 
 
 vx[:,:] = 1./2*( sm.hx[1:,:] + sm.hx[:-1,:] )
 vy[:,:] = 1./2*( sm.hy[:,1:] + sm.hy[:,:-1] )
-vz[:,:] = 1./2*(sm.ez[1:,1:] - sm.ez[:-1,:-1])
+vz[:,:] = 1./2*(sm.ez[1:,1:] + sm.ez[:-1,:-1])
 
 #vz = np.zeros((len(glocx),len(glocy)))
 #dirv = np.zeros((len(glocx),len(glocy)))
@@ -58,9 +58,9 @@ for t in niter:
 
     vx[:,:] = 1/2*( sm.hx[1:,:] + sm.hx[:-1,:] )
     vy[:,:] = 1/2*( sm.hy[:,1:] + sm.hy[:,:-1] )
-    vz[:,:] = 1/2*(sm.ez[1:,1:] - sm.ez[:-1,:-1])
+    vz[:,:] = 1/2*(sm.ez[1:,1:] + sm.ez[:-1,:-1])
     minim = np.nanmin(vz)
-    maxim = np.nanmax(vz)*1.2
+    maxim = np.nanmax(vz)
     #Esto es el cálculo de componentes, no forma 
     #No forma parte de la representación en sí
     
@@ -71,7 +71,7 @@ for t in niter:
     
     e_mod = np.sqrt(vx**2 + vy**2)
     ax1.quiver(posx[filtro],posy[filtro],vx[filtro],vy[filtro],scale=18,angles='xy')
-    im=ax1.imshow(e_mod.T,extent=(0.0,1.0,0.0,1.0),origin='lower',cmap='viridis',vmax=maxim,vmin=-0.3) 
+    im=ax1.imshow(e_mod.T,extent=(0.0,1.0,0.0,1.0),origin='lower',cmap='viridis',vmax=maxim,vmin=minim) 
 #    cb1 = plt.colorbar(im, ax=ax1,label=r'|$\vec{E}$|')
 #    ax1.grid()
     
@@ -92,9 +92,10 @@ for t in niter:
 fig = plt.figure(figsize=(8,8))
 plt.title("Evolución temporal de la energía del campo electromagnético")
 plt.grid()
-plt.xlabel("Tiempo")
+plt.xlabel("Pasos temporales")
 plt.ylabel("Energía")
-plt.plot(niter*sm.dt, energy_list)
+plt.plot(niter, energy_list)
+#plt.savefig("energia_ez.png")
 plt.show()
 
 
