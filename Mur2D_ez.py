@@ -59,8 +59,8 @@ for t in niter:
     vx[:,:] = 1/2*( sm.hx[1:,:] + sm.hx[:-1,:] )
     vy[:,:] = 1/2*( sm.hy[:,1:] + sm.hy[:,:-1] )
     vz[:,:] = 1/2*(sm.ez[1:,1:] + sm.ez[:-1,:-1])
-    minim = np.nanmin(vz)
-    maxim = np.nanmax(vz)
+
+
     #Esto es el cálculo de componentes, no forma 
     #No forma parte de la representación en sí
     
@@ -71,11 +71,11 @@ for t in niter:
     
     e_mod = np.sqrt(vx**2 + vy**2)
     ax1.quiver(posx[filtro],posy[filtro],vx[filtro],vy[filtro],scale=18,angles='xy')
-    im=ax1.imshow(e_mod.T,extent=(0.0,1.0,0.0,1.0),origin='lower',cmap='viridis',vmax=maxim,vmin=minim) 
+    im=ax1.imshow(e_mod.T,extent=(0.0,1.0,0.0,1.0),origin='lower',cmap='viridis',vmax=0.5,vmin=0.0) 
 #    cb1 = plt.colorbar(im, ax=ax1,label=r'|$\vec{E}$|')
 #    ax1.grid()
     
-    im=ax2.imshow(vz.T,extent=(0.0,1.0,0.0,1.0),cmap='turbo',origin='lower')
+    im=ax2.imshow(vz.T,extent=(0.0,1.0,0.0,1.0),cmap='turbo',origin='lower',vmax=0.3,vmin=-0.2)
     ax2.contour(posx,posy,vz,4,colors='white',alpha=0.7)
     #cb2 = plt.colorbar(im, ax=ax2,label=r'H$_z$')
 #    ax2.grid()
