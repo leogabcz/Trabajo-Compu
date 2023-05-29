@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from simulation2Dfdtd import fdtd2D
 
 
-sm = fdtd2D(201, 201, 0.95, 'mur', 'gaussrad')
+sm = fdtd2D(201, 201, 0.95, 'mur')
 
 glocx = np.linspace(0, sm.Lx*sm.dx, sm.Lx-1)    #Genero la dimensión X del espacio de nuestro sistema
 glocy = np.linspace(0, sm.Ly*sm.dy, sm.Ly-1)    #Genero la dimensión Y del espacio de nuestro sistema
@@ -46,35 +46,37 @@ figure.tight_layout()                #Esto deja todo compactado (evita que se pi
 ax1 = plt.subplot(1,2,1)
 ax2 = plt.subplot(1,2,2)             #Esto declara los plot que se pintarán por serparado, así se pueden quitar o añadir 
                                      #fácilmente
-        
-tRange = np.linspace(0, 10, 401)
-energy_list = []
-for t in tRange:
+energia_list = []        
+
+niter = np.arange(0,400,1)
+for t in niter:
     
     sm.sim(1)
-
-    energy_list.append(sm.energy)
-
+    
+    energia_list.append(sm.energy)
+    
     vx[:,:] = 1/2*( sm.ex[:,1:] + sm.ex[:,:-1] )
     vy[:,:] = 1/2*( sm.ey[1:,:] + sm.ey[:-1,:] )
     vz[:,:] = sm.hz[:,:]
-    minim = np.nanmin(vz)
-    maxim = np.nanmax(vz)*1.2
+
     #Esto es el cálculo de componentes, no forma 
     #No forma parte de la representación en sí
     
     #ax1 es el plot vectorial con el color de fondo, ax2 sólo son las flechas y ax3 los colores con líneal de nivel
     
+    ax1.set_title(r"Campo $\vec{E}\,=\,\vec{E}_x + \vec{E}_y$")
+    ax2.set_title(r"Campo $\vec{H}_z$")
+    
     e_mod = np.sqrt(vx**2 + vy**2)
     ax1.quiver(posx[filtro],posy[filtro],vx[filtro],vy[filtro],scale=18,angles='xy')
-    im=ax1.imshow(e_mod.T,extent=(0.0,1.0,0.0,1.0),origin='lower',cmap='viridis',vmax=maxim,vmin=-0.3) 
+    im=ax1.imshow(e_mod.T,extent=(0.0,1.0,0.0,1.0),origin='lower',cmap='viridis') 
 #    cb1 = plt.colorbar(im, ax=ax1,label=r'|$\vec{E}$|')
-#    ax1.grid()
+    ax1.grid()
     
     im=ax2.imshow(vz.T,extent=(0.0,1.0,0.0,1.0),cmap='turbo',origin='lower')
     ax2.contour(posx,posy,vz,4,colors='white',alpha=0.7)
 #    cb2 = plt.colorbar(im, ax=ax2,label=r'H$_z$')
-#    ax2.grid()
+    ax2.grid()
 #    plt.grid()
 #    plt.ylim(-0.1, 1.1)
 #    plt.xlim(glocx[0], glocx[-1])
@@ -84,10 +86,15 @@ for t in tRange:
 #    ax3.cla()
 #    cb1.remove()
 #    cb2.remove()
-
-
+    
+    
+    
+    
+    
 fig = plt.figure(figsize=(8,8))
-plt.plot(tRange, energy_list)
+plt.title("Evolución temporal de la energía del campo electromagnético")
+plt.grid()
+plt.xlabel("Tiempo")
+plt.ylabel("Energía")
+plt.plot(niter*sm.dt, energia_list)
 plt.show()
-
-print("END")
