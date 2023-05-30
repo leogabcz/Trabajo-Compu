@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from simulation2Dfdtd import fdtd2D
+from simulation2Dfdtd_hz import fdtd2D
 
 
 sm = fdtd2D(201, 201, 0.95, 'mur')
